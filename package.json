@@ -7,12 +7,14 @@
   "repository": "https://github.com/akatechis/koa-hotwire",
   "author": "Alexandros Katechis",
   "license": "MIT",
+  "files": [
+    "artifacts/build/*"
+  ],
   "scripts": {
     "lint": "eslint .",
     "build": "tsc --project .",
     "test": "nyc mocha",
-    "clean": "rm -rf artifacts",
-
+    "clean": "rm -rf artifacts koa-hotwire-*.tgz",
     "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
