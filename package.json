@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "build": "tsc --project .",
     "test": "nyc mocha",
-    "clean": "rm -rf artifacts"
+    "clean": "rm -rf artifacts",
+
+    "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
