@@ -1,6 +1,6 @@
 module.exports = {
   env: {
-    browser: false,
+    node: true,
     es2021: true,
   },
   extends: ['standard'],
@@ -21,4 +21,7 @@ module.exports = {
       functions: 'always-multiline',
     }],
   },
+  ignorePatterns: [
+    'artifacts/',
+  ],
 }
