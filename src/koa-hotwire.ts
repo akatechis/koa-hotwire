@@ -15,11 +15,12 @@ export interface TurboFrameFragment {
 
 export type Fragment = TurboFrameFragment | string
 
-export default function makeHotwireMiddleware (options: HotwireOptions) {
+export default function makeHotwireMiddleware (app: Koa, options: HotwireOptions): Koa.Middleware {
   const render = templateRenderer(options)
 
+  app.context.frame = makeFrame
+
   return async function hotwireMiddleware (ctx: Koa.Context, next: Koa.Next) {
-    ctx.frame = makeFrame
     await next()
 
     if (Array.isArray(ctx.view)) {

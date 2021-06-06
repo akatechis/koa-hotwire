@@ -94,10 +94,9 @@ describe('koa-hotwire middleware', () => {
 
 async function makeHotwireServer (handler: any): Promise<http.Server> {
   const app = new Koa()
-  app.use(hotwire({
-    tmplPath: path.resolve(__dirname, './templates'),
-    tmplEngine: 'hogan',
-  }))
+  const tmplPath = path.resolve(__dirname, './templates')
+  const tmplEngine = 'hogan'
+  app.use(hotwire(app, { tmplPath, tmplEngine }))
   app.use(handler)
   return new Promise((resolve) => {
     const server = app.listen(5050, () => resolve(server))
