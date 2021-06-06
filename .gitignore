@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# We're a package, so don't lock resolved dependencies
+yarn.lock
+
+# All build artifacts go here
+artifacts/

@@ -1,0 +1,9 @@
+color: true
+extension:
+  - ts
+reporter: spec
+require: tests/bootstrap.ts
+spec: tests/**/*test.ts
+watch-extensions:
+  - ts
+ui: bdd
