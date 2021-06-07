@@ -16,9 +16,12 @@
     "test": "nyc mocha",
     "clean": "rm -rf artifacts koa-hotwire-*.tgz",
     "prepack": "yarn clean && yarn build",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
     "@semantic-release/changelog": "^5.0.1",
     "@types/chai": "^4.2.18",
     "@types/consolidate": "^0.14.0",
@@ -34,6 +37,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "hogan": "^1.0.2",
+    "husky": "^6.0.0",
     "koa": "^2.13.1",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0",
