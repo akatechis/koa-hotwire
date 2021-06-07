@@ -16,8 +16,7 @@
     "test": "nyc mocha",
     "clean": "rm -rf artifacts koa-hotwire-*.tgz",
     "prepack": "yarn clean && yarn build",
-    "release": "semantic-release",
-    "semantic-release": "semantic-release"
+    "release": "semantic-release"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
