@@ -13,6 +13,17 @@ describe('koa-hotwire middleware', () => {
       server.close()
     })
 
+    async function makeHotwireServer (handler: (ctx: Koa.Context) => void): Promise<http.Server> {
+      const app = new Koa()
+      const tmplPath = path.resolve(__dirname, './templates')
+      const tmplEngine = 'hogan'
+      app.use(hotwire(app, { tmplPath, tmplEngine }))
+      app.use(handler)
+      return new Promise((resolve) => {
+        const server = app.listen(5050, () => resolve(server))
+      })
+    }
+
     it('renders pages when using ctx.view in a handler', async () => {
       server = await makeHotwireServer((ctx: Koa.Context) => {
         ctx.view = ['top', 'body-static', 'bottom']
@@ -91,17 +102,6 @@ describe('koa-hotwire middleware', () => {
     })
   })
 })
-
-async function makeHotwireServer (handler: any): Promise<http.Server> {
-  const app = new Koa()
-  const tmplPath = path.resolve(__dirname, './templates')
-  const tmplEngine = 'hogan'
-  app.use(hotwire(app, { tmplPath, tmplEngine }))
-  app.use(handler)
-  return new Promise((resolve) => {
-    const server = app.listen(5050, () => resolve(server))
-  })
-}
 
 async function requestPage (url: string, frame?: string): Promise<string> {
   return new Promise((resolve) => {

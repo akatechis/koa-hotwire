@@ -16,10 +16,6 @@ jobs:
       - name: Install deps
         run: yarn install
 
-      # Run a build
-      - name: Build package
-        run: yarn build
-
       # Release
       - name: Release it
         env:
