@@ -9,9 +9,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-20.04, ubuntu-18.04, windows-latest, macos-latest ]
         node: [12, 14, 15, 16]
     steps:
       # Setup steps
@@ -29,3 +30,13 @@ jobs:
         run: yarn test
       - name: Build package
         run: yarn build
+
+  release:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Release it
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn release
