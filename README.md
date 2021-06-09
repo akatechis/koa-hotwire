@@ -36,7 +36,12 @@ Use `ctx.state` to pass data to your templates
 // can also be router.get('/some-page', ctx => { ... })
 app.use(ctx => {
     ctx.state.someData = fetchSomeData()
-    ctx.view = ['header', 'nav', ctx.frame('body-frame', 'some-page'), 'footer']
+    ctx.view = [
+        'header',
+        'nav',
+        ctx.frame('body-frame', 'some-page'),
+        'footer'
+    ]
 })
 ```
 
