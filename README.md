@@ -36,8 +36,8 @@ pass data to your templates
 
 ```js
 // can also be router.get('/some-page', ctx => { ... })
-app.use(ctx => {
-    ctx.state.someData = fetchSomeData()
+app.use(async ctx => {
+    ctx.state.someData = await fetchSomeData()
     ctx.view = [
         'header',
         'nav',
