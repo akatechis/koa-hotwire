@@ -20,6 +20,7 @@ module.exports = {
       exports: 'always-multiline',
       functions: 'always-multiline',
     }],
+    'brace-style': ['error', 'stroustrup'],
   },
   ignorePatterns: [
     'artifacts/',

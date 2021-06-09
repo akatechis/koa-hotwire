@@ -25,6 +25,7 @@ export default function makeHotwireMiddleware (app: Koa, options: HotwireOptions
 
     if (Array.isArray(ctx.view)) {
       const frameId = ctx.request.header['turbo-frame']
+      // client requested a specific frame
       if (typeof frameId === 'string') {
         const frame = ctx.view.find(
           (fragment: Fragment) => fragmentIsTurboFrame(fragment) && fragment.id === frameId,
@@ -32,10 +33,13 @@ export default function makeHotwireMiddleware (app: Koa, options: HotwireOptions
         // the frame that the client requested was not found in the handler's result
         if (frame === undefined) {
           ctx.body = await renderFrameNotFound(frameId)
-        } else {
+        }
+        else {
           ctx.body = await render(frame, ctx.state)
         }
-      } else {
+      }
+      // client requested the entire page
+      else {
         const htmlFrags = await Promise.all(
           ctx.view.map((frag: Fragment) => render(frag, ctx.state)),
         )

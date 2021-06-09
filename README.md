@@ -1,6 +1,8 @@
 # koa-hotwire
 Koa middleware to enable the hotwire web application architecture
 
+![Build](https://github.com/akatechis/koa-hotwire/actions/workflows/ci.yml/badge.svg)
+
 ## Usage
 
 Install the package, and a template engine of your choice (see section below)
