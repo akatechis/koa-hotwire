@@ -1,25 +1,34 @@
 import path from 'path'
 import cons from 'consolidate'
 import type Koa from 'koa'
-import type { TemplateEngineName } from './types'
+import type { HotwireOptions, Hotwire, Fragment, TurboFrameFragment } from './types'
 
-export interface HotwireOptions {
-  tmplEngine: TemplateEngineName;
-  tmplPath: string;
-}
+type Renderer = (f: Fragment, s: any) => Promise<string>
 
-export interface TurboFrameFragment {
-  id: string;
-  view: string;
-}
-
-export type Fragment = TurboFrameFragment | string
-
-export default function makeHotwireMiddleware (app: Koa, options: HotwireOptions): Koa.Middleware {
+export function createHotwire (options: HotwireOptions): Hotwire {
   const render = templateRenderer(options)
+  const hotwireMiddleware = createHotwireMiddleware(render)
+  return (app: Koa) => {
+    app.context.frame = makeFrame
+    app.use(hotwireMiddleware)
+  }
+}
 
-  app.context.frame = makeFrame
+function templateRenderer (options: HotwireOptions): Renderer {
+  const { tmplPath, tmplEngine } = options
 
+  return async function renderFragment (fragment: Fragment, state: any): Promise<string> {
+    const viewId = fragmentView(fragment)
+    const absTmplPath = path.resolve(tmplPath, `${viewId}.html`)
+    const contents = await cons[tmplEngine](absTmplPath, state)
+    if (fragmentIsTurboFrame(fragment)) {
+      return wrapFragmentInTurboFrame(fragment.id, contents)
+    }
+    return contents
+  }
+}
+
+function createHotwireMiddleware (render: Renderer) {
   return async function hotwireMiddleware (ctx: Koa.Context, next: Koa.Next) {
     await next()
 
@@ -46,20 +55,6 @@ export default function makeHotwireMiddleware (app: Koa, options: HotwireOptions
         ctx.body = htmlFrags.join('\n')
       }
     }
-  }
-}
-
-function templateRenderer (options: HotwireOptions) {
-  const { tmplPath, tmplEngine } = options
-
-  return async function renderFragment (fragment: Fragment, state: any) {
-    const viewId = fragmentView(fragment)
-    const absTmplPath = path.resolve(tmplPath, `${viewId}.html`)
-    const contents = await cons[tmplEngine](absTmplPath, state)
-    if (fragmentIsTurboFrame(fragment)) {
-      return wrapFragmentInTurboFrame(fragment.id, contents)
-    }
-    return contents
   }
 }
 

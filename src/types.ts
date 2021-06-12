@@ -1,3 +1,5 @@
+import type Koa from 'koa'
+
 export type TemplateEngineName =
   | 'arc-templates'
   | 'atpl'
@@ -42,3 +44,17 @@ export type TemplateEngineName =
   | 'velocityjs'
   | 'walrus'
   | 'whiskers'
+
+export interface HotwireOptions {
+  tmplEngine: TemplateEngineName;
+  tmplPath: string;
+}
+
+export interface TurboFrameFragment {
+  id: string;
+  view: string;
+}
+
+export type Fragment = TurboFrameFragment | string
+
+export type Hotwire = (app: Koa) => void

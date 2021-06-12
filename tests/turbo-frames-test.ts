@@ -1,9 +1,8 @@
 import { describe, it, afterEach } from 'mocha'
 import { expect } from 'chai'
-import Koa from 'koa'
-import hotwire from '../src/koa-hotwire'
-import path from 'path'
 import http from 'http'
+import Koa from 'koa'
+import { createTestServer, requestPage } from './test-server'
 
 describe('koa-hotwire middleware', () => {
   describe('turbo-frame rendering', () => {
@@ -13,19 +12,8 @@ describe('koa-hotwire middleware', () => {
       server.close()
     })
 
-    async function makeHotwireServer (handler: (ctx: Koa.Context) => void): Promise<http.Server> {
-      const app = new Koa()
-      const tmplPath = path.resolve(__dirname, './templates')
-      const tmplEngine = 'hogan'
-      app.use(hotwire(app, { tmplPath, tmplEngine }))
-      app.use(handler)
-      return new Promise((resolve) => {
-        const server = app.listen(5050, () => resolve(server))
-      })
-    }
-
     it('renders pages when using ctx.view in a handler', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.view = ['top', 'body-static', 'bottom']
       })
       const body = await requestPage('http://localhost:5050')
@@ -38,7 +26,7 @@ describe('koa-hotwire middleware', () => {
     })
 
     it('passes ctx.state to render calls', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.state.items = [
           { name: 'Alexandros' },
           { name: 'Ioannis' },
@@ -54,7 +42,7 @@ describe('koa-hotwire middleware', () => {
     })
 
     it('wraps turboframes in custom elements when requested', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.state.items = [{ name: 'Alexandros' }]
         ctx.view = ['top', ctx.frame('frame-id', 'body-list'), 'bottom']
       })
@@ -67,7 +55,7 @@ describe('koa-hotwire middleware', () => {
     })
 
     it('optimizes rendering when a specific turbo-frame is requested', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.state.items = [{ name: 'Alexandros' }]
         ctx.view = ['top', ctx.frame('frame-id', 'body-list'), 'bottom']
       })
@@ -80,7 +68,7 @@ describe('koa-hotwire middleware', () => {
     })
 
     it('returns an error when the requested frame is not in the view', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.state.items = [{ name: 'Alexandros' }]
         ctx.view = ['top', ctx.frame('frame-id', 'body-list'), 'bottom']
       })
@@ -94,7 +82,7 @@ describe('koa-hotwire middleware', () => {
     })
 
     it('does nothing when the handler doesn\'t produce a view', async () => {
-      server = await makeHotwireServer((ctx: Koa.Context) => {
+      server = await createTestServer((ctx: Koa.Context) => {
         ctx.body = '<html>simple page</html>'
       })
       const body = await requestPage('http://localhost:5050')
@@ -102,25 +90,3 @@ describe('koa-hotwire middleware', () => {
     })
   })
 })
-
-async function requestPage (url: string, frame?: string): Promise<string> {
-  return new Promise((resolve) => {
-    const options = {
-      headers: {},
-    }
-    if (frame) {
-      options.headers = { 'turbo-frame': frame }
-    }
-    http.get(url, options, (res) => {
-      res.setEncoding('utf8')
-      let resp = ''
-
-      res.on('data', chunk => {
-        resp += chunk
-      })
-      res.on('end', () => {
-        resolve(resp)
-      })
-    })
-  })
-}
