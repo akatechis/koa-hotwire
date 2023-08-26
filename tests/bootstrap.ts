@@ -1,1 +1,3 @@
-require('ts-node/register')
+require('ts-node').register({
+  logError: true,
+})
